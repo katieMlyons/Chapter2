@@ -1,0 +1,76 @@
+We have fastq files demultiplexed by illumina index. The file names specify:
+the sequencing run (out of 2 separate runs)
+the pool and index (each pool uses all one index)
+the lane (pools can be spread out among multiple lanes)
+whether a forward R1 or reverse R2 read
+
+There are seven total pools: four from one sequencing run, and three from the other
+Each pool has a barcode file matching the inline barcodes to the samples. The best way to handle this situation - the files are demultiplexed by index, but not inline barcode - is to run the demultiplexing step separately on each pool, then merge and run the rest of the steps on everything at once.
+
+Because iPyrad runs on python 2.7, I made a separate conda environment that I can activate.
+
+The first step is to generate the params file. I titled the jobs according to run and pool. So to start:
+
+ipyrad -n JA14300pool1
+This generates a file called params-JA14300pool1.txt .
+I will go into this file, change all the things that need to be changed, copy it to create six additional params files, and go into those six to change some job-specific stuff.
+
+
+What I changed:
+1. project dir: i made a separate directory instead of working in the current one (personal pref)
+2. raw fastq path: i have the raw reads from all runs and pools in a dir called raw. i use a wildcard like this: raw/JA14300_ddRAD_Pool1*.gz 
+3. barcodes path: i have the barcodes in the working dir, so ./JA14300_pool1.txt
+7. datatype: change to pairddrad
+8. restriction_overhang: change to CATGC,TGCAG
+27. output_formats: change to * if you want every output format possible
+28. pop_assign_file: path to ./popAssign.txt, file generated with R script
+
+I then copied that params file to make six others, changing the pool number and run name as necessary.
+I had to go in to those six files and change numbers 2 and 3 to the correct fastqs and barcode files.
+
+### STEP ONE ###
+For each separate params file, do:
+ipyrad -p #PARAMFILE -s 1
+The fastqs will be demultiplexed to new fastqs of individual samples.
+They will be placed in a directory called the job name followed by "_fastqs"
+You will also find a txt file with the demultiplexing stats
+P.S. this generates a .json file that stays with the job
+
+### MERGING ###
+ipyrad -m #NEWNAME #PARAMFILE1 #PARAMFILE2 #ETC
+you can look at the new params file and see that all the filepaths are combined
+
+### STEP 2 ###
+ipyrad -p #NEWNAME -s 2
+In your working dir, you will now have a directory called the job name followed by "_edits"
+There will also be a file with the filtering stats
+
+### NOTE ON DUPLICATES ###
+There are two samples - AHP 3255 and TNHC 62780 - that have duplicates. I think when step 2 is run, samples with identical names are simply concatenated.
+
+### STEP 3 ###
+This step clusters the reads within each sample.
+ipyrad -p #NEWNAME -s 3
+
+### THE REST OF THE STEPS ###
+You can run multiple steps at a time.
+ipyrad -p #NEWNAME -s 4567
+
+### STATS AND OUTPUT ###
+You can view all the stats using the command
+ipyrad -p #NEWNAME -r
+The output files will be put in a separate directory.
+
+### branching ###
+As far as I understand, data is processed within-sample up through step 5. The exception is the heterozygosity and sequence error estimation in step 4. So I branched just the north 3 species after step 5 and ran them as a job called "northOnly".
+
+### results ###
+There were some low-quality samples that only recovered a few loci. I am going to rerun with more stringent standards and try to make some plots to compare the runs.
+
+### RUNS ###
+popAssignfile seems to change how loci are filtered, I put zero after every pop
+run1: defaults, with popAssignfile, ALL SAMPLES
+northonly: defaults, with popAssignNorth file, NORTH ONLY, STEP 6 and 7, SAME
+northonly min4: defaults, no pop assign file, NORTH ONLY, STEP 7, SAME
+northonly min10: min ind 10, pop assign file, NORTH ONLY, STEP 7, SAME
+northonly min10 FIXED: min ind 10, no pop assign file, NORTH ONLY, STEP 7

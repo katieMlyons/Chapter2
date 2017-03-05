@@ -1,0 +1,18 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Spatial PCA is available through the adegenet package. I'm trying to figure out how the spatial info needs to be passed into sPCA. The spatial data seems to be the same also for the IBD function (Mantel test) 
+
+```{r}
+library(adegenet)
+data(rupica)
+```
+
+The rupica data is a formal genind object, which is what adegenet uses - also genpop. The xy component is in 'other', but it can also be its own separate argument to the sPCA.
+```{r}
+head(rupica$other$xy)
+```
+I don't really understand what this data is. It's not GPS coordinates.
+
