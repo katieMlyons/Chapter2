@@ -1,0 +1,6 @@
+README:
+
+1/9/17: received NEXUS file, only contains one sequence per individual, need every ind
+
+received xlsx with data for all individuals, remove duplicates and pull out GPS coordinates
+actually don't need to remove duplicates, filtering down to only locality data anyway

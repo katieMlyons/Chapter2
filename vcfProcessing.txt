@@ -1,0 +1,11 @@
+#! /bin/bash
+
+VCF=$1
+bads=$2
+
+vcftools --vcf $1 --remove $2 --max-missing 0.25 --min-alleles 2 --max-alleles 2 --recode-INFO-all --recode --out filt
+
+cat filt.recode.vcf | perl -pe 's/NS=/AF=0.5;NS=/'| perl -pe 's/\tGT/;\tGT/' >filtaf.vcf
+
+# changed maxDP to maxDP-random, looks like maxDP isn't an option
+perl ~/GoogleDrive/Chapter2/2bRAD_denovo/thinner.pl vcf=filtaf.vcf interval=2000 criterion=maxDP > ${VCF/.vcf/.thinned.vcf}
