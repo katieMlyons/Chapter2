@@ -1,8 +1,10 @@
 library(vcfR)
 library(adegenet)
 library(readr)
+library(dplyr)
 
-test <- read.vcfR("~/Desktop/thinned.vcf")
+input <- readline("Thinned VCF? ")
+test <- read.vcfR(input)
 gl <- vcfR2genlight(test)
 
 
@@ -27,9 +29,10 @@ write_delim(SpeciesAssignments, path = "DadiPopList.txt", delim = "\t", col_name
 
 ########## Generate species list for gl, order matters
 
+newSampleDF <- as.data.frame(newSampleList)
 new <- df
 # using lapply, loop over columns and match values to the look up table. store in "new".
-new[] <- lapply(samplistdf, function(x) SpeciesAssignments$Species[match(x, SpeciesAssignments$`Stacks sample label`)])
+new <- lapply(newSampleDF, function(x) SpeciesAssignments$Species[match(x, SpeciesAssignments$`Stacks sample label`)])
 
 pop(gl) <- new$newSampleList
 
@@ -49,10 +52,17 @@ nas = nas/(gl@n.loc)
 
 ########################################################################
 
+pop(gl)=factor(admix.cols,levels=c("green3", "darkorange", "red", "grey30", "blue", "hotpink"))
+cols = c("green3", "darkorange", "red", "grey30", "blue", "hotpink", "olivedrab1", "gold", "skyblue","green4" )
+
+#### for three species PCA, so as not to confuse colors with 5-Q admixture PCA
+cols = c("gold", "skyblue", "green4")
+str(pop(gl))
+
 pca=glPca(gl,nf=3)
 
-col=c("red","orange","green2","blue")
-col=cols
+#col=c("red","orange","green2","blue")
 
-s.class(pca$scores[],pop(gl),col=transp(col,0.5),cstar=1,cellipse=0,clabel=0,axesell=F,grid=F,cpoint=2)
+
+s.class(pca$scores[],pop(gl),col=transp(cols,0.5),cstar=1,cellipse=0,clabel=0,axesell=F,grid=F,cpoint=2)
 

@@ -1,6 +1,14 @@
 README:
 
-1/9/17: received NEXUS file, only contains one sequence per individual, need every ind
+iPyrad: see iPyradNotes
+have generated one dataset for downstream analysis. R1s only
 
-received xlsx with data for all individuals, remove duplicates and pull out GPS coordinates
-actually don't need to remove duplicates, filtering down to only locality data anyway
+Filtering: combination of (first) R script and (second) vcftools, generate thinned filtered vcf
+
+Plink: generate relevant files for admixture from vcf
+
+Admixture: 
+
+Working with Thinned SNPS:
+(1) plot admixture
+(2) using same colors, plot PCA

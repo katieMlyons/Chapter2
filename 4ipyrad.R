@@ -53,3 +53,13 @@ full %>%
   select (Species) -> NorthSpeciesAlpha
 
 write_delim(NorthSpeciesAlpha, "northSpeciesAlpha", "\n", col_names=FALSE)
+
+# create list linking north samples to species
+full %>%
+  mutate(`Stacks sample label` = gsub(" \\(duplicate\\)", "", `Stacks sample label`)) %>%
+  mutate(`Stacks sample label` = gsub(" _", "_", `Stacks sample label`)) %>%
+  filter(Species %in% c("tonkawae", "naufragia", "chisholmensis")) %>%
+  select(`Stacks sample label`, Species) %>%
+  unique() -> Ind2SpeciesNorth
+
+write_delim(Ind2SpeciesNorth, "Ind2SpeciesNorth.txt", col_names=FALSE)
