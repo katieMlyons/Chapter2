@@ -45,4 +45,4 @@ filename = strsplit(basename(input), ".", fixed=TRUE)[[1]][1]
 write.table(bads, row.names=F, col.names = F, quote=F, file= paste ("bads.", num*100, ".", filename,".tab", sep=""))
 
 
-## go into instructions.txt and generate new vcf file called "thinned"
+## go into vcfprocessing.txt and generate new vcf file called "thinned"

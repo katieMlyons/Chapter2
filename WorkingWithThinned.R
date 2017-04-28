@@ -66,3 +66,5 @@ pca=glPca(gl,nf=3)
 
 s.class(pca$scores[],pop(gl),col=transp(cols,0.5),cstar=1,cellipse=0,clabel=0,axesell=F,grid=F,cpoint=2)
 
+# or add ellipses and labels!
+s.class(pca$scores[],pop(gl),col=transp(cols,0.5),cstar=1,cellipse=1,clabel=1,axesell=F,grid=F,cpoint=2)

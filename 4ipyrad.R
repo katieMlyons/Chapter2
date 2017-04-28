@@ -63,3 +63,12 @@ full %>%
   unique() -> Ind2SpeciesNorth
 
 write_delim(Ind2SpeciesNorth, "Ind2SpeciesNorth.txt", col_names=FALSE)
+
+# create list of northern species for vcftools to keep
+full %>%
+  mutate(`Stacks sample label` = gsub(" \\(duplicate\\)", "", `Stacks sample label`)) %>%
+  mutate(`Stacks sample label` = gsub(" _", "_", `Stacks sample label`)) %>%
+  filter(Species %in% c("tonkawae", "naufragia", "chisholmensis")) %>%
+  select(`Stacks sample label`) -> ToKeep
+
+write_delim(ToKeep, "vcftoolsKeep.txt", col_names=FALSE)

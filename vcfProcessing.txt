@@ -10,3 +10,7 @@ cat filt.recode.vcf | perl -pe 's/NS=/AF=0.5;NS=/'| perl -pe 's/\tGT/;\tGT/' >fi
 
 # changed maxDP to maxDP-random, looks like maxDP isn't an option
 perl ~/GoogleDrive/Chapter2/2bRAD_denovo/thinner.pl vcf=filtaf.vcf interval=2000 criterion=maxDP-random > ${VCF/.vcf/.thinned.vcf}
+
+
+##### if the vcf had the full set of samples do this first
+vcftools --vcf $1 --keep $KEEP --recode-INFO-all --recode --out $NORTH
